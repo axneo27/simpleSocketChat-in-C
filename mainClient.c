@@ -64,7 +64,7 @@ int sendMes(int sock, char* buffer, ssize_t lenBuff){
         printf("send() failed");
         return -1;
     }else {
-        printf("Message has been just sent : %s\n", buffer);
+        //printf("Message has been just sent : %s\n", buffer);
         if (strcmp(buffer, "exit") == 0) {
             printf("Exiting.\n");
             return 0;
