@@ -31,7 +31,7 @@ typedef struct Clients{
     struct ClientData* clients[MAXclnts];
 } Clients;
 char* recvMesFromClient(ClientData clnt);
-void SendMesChat(Clients* carr, char* mes);
+void SendMesChat(Clients* carr, char* mes, int sock);
 
 int mainSer(char* Port){
     in_port_t servPort = atoi(Port);
@@ -152,7 +152,7 @@ void* HandleClientThread(void* clients){
 
         printf("Formatted mes: '%s'\n", formattedMes);
 
-        SendMesChat(carr, formattedMes);
+        SendMesChat(carr, formattedMes, clntSock);
         if (strcmp(mes, "exit") == 0){
             printf("User %s from port %d exited.\n", data->userName, ntohs(clntAddr.sin_port));
             CurClnts--;
@@ -167,10 +167,12 @@ void* HandleClientThread(void* clients){
     return NULL;
 }
 
-void SendMesChat(Clients* carr, char* mes){
-    for (int i = 0; i < CurClnts; i++){
-        sendMesToClient(carr->clients[i]->clntSock, mes, strlen(mes));
-        printf("sending: '%s' to client number %d\n", mes, i);
+void SendMesChat(Clients* carr, char* mes, int sock){
+    for (int i = 0; i < MAXclnts; i++){
+        if (sock != carr->clients[i]->clntSock){
+            sendMesToClient(carr->clients[i]->clntSock, mes, strlen(mes));
+            printf("sending: '%s' to client number %d\n", mes, i);
+        }
     }
 }
 
